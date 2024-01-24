@@ -1,0 +1,27 @@
+#' Legislative Authors of Florida Legislative Bills (1998-2023)
+#'
+#' This dataset contains information on the authors of Florida legislative
+#' bills filed from 1998 to 2023. There may be multiple authors per bill.
+#' The bill information was sourced from the Florida legislative website
+#' for both the House and the Senate.
+#'
+#' If you find yourself augmenting the data and feel it could benefit the
+#' community, please consider opening an Issue on the GitHub project. We are
+#' always open to including user contributions.
+#'
+#' @format A data frame with XXXXX rows and 4 variables:
+#' \describe{
+#'   \item{Year}{Year of the session in which the bill was filed}
+#'   \item{Session}{Session in which the bill was filed}
+#'   \item{Number}{Bill number with prefix}
+#'   \item{Author}{An author of the bill}
+#' }
+#'
+#' @source \itemize{
+#'   \item <https://www.flsenate.gov/Session/Bills/>
+#' }
+#'
+#' @examples
+#' data(authors)
+#' summary(authors)  # To view a basic summary of the dataset
+"authors"
