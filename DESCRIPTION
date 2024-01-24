@@ -2,7 +2,7 @@ Package: floridagov
 Title: Florida Legislative Bills (1998-2023)
 Version: 0.1.0.1000
 Authors@R: 
-    person("Steven", "Brendtro", , "sbrendtro@users.noreply.github.com", role = c("aut", "cre"),
+    person("Steven", "Brendtro", , "opalresearchteam@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0008-5841-1108"))
 Description: This dataset provides Florida legislative bill info from 1998-2023
 License: MIT + file LICENSE
