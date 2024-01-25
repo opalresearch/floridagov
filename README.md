@@ -39,13 +39,7 @@ possible.
 
 ## Installation
 
-You can install this package from CRAN:
-
-``` r
-install.packages("floridagov")
-```
-
-Or you can install the development version from GitHub with
+You can install the development version from GitHub with
 [remotes](https://github.com/r-lib/remotes):
 
 ``` r
@@ -89,13 +83,27 @@ data(bills)
 head(bills %>% select(Session,Number,Title,Category))
 ```
 
-    ##   Session Number                             Title      Category
-    ## 1    1999   HB 1   State Agency Performance Report  GENERAL BILL
-    ## 2    1999   SB 2                          Adoption  GENERAL BILL
-    ## 3    1999   HB 3      Child Identification Program  GENERAL BILL
-    ## 4    1999   SB 4 Relief/Joseph B. Farver/CFS Dept. CLAIM/GENERAL
-    ## 5    1999   HB 5   Immunizations/School Attendance  GENERAL BILL
-    ## 6    1999   SB 6  Relief/Marquez/Metro-Dade Police   CLAIM/LOCAL
+    ##   Session Number
+    ## 1    1998   HB 1
+    ## 2    1998   SB 2
+    ## 3    1998   HB 3
+    ## 4    1998   SB 4
+    ## 5    1998   HB 5
+    ## 6    1998   SB 6
+    ##                                                                                                                                                                                                                                                              Title
+    ## 1                                                                                                                                                                                                                                                Tobacco Education
+    ## 2                                                                    Relief/David Kelley & Kelley Estate;  compensates David Kelley & Estate of Alto Kelley for injuries & damages sustained as result of negligence of DOT. CLAIM WITH APPROPRIATION: $1,400,000.
+    ## 3                                                                                                                                                                                                                                        Unemployment Compensation
+    ## 4 Relief/Garcia/Miami Beach;  provides for relief of Juan A. Garcia, Jr., & Juan & Barbara Garcia, as natural parents of Juan A. Garcia, Jr.; compensates them for injuries & damages sustained as result of negligence of City of Miami Beach. CLAIM: $1,050,000.
+    ## 5                                                                                                                                                                                                                                                         Veterans
+    ## 6                                                                                     Relief/Michelle Ponce/Dade Co.;  compensates Michelle Ponce, a minor, for injuries & damages sustained as result of negligence of Metropolitan Dade County. CLAIM: $410,000.
+    ##       Category
+    ## 1 GENERAL BILL
+    ## 2 GENERAL BILL
+    ## 3 GENERAL BILL
+    ## 4   LOCAL BILL
+    ## 5 GENERAL BILL
+    ## 6   LOCAL BILL
 
 ### Legislative Actions
 
@@ -108,14 +116,14 @@ head(actions)
 ```
 
     ## # A tibble: 6 × 4
-    ##    Year Session Number Action                                                 
-    ##   <dbl> <chr>   <chr>  <chr>                                                  
-    ## 1  1999 1999    HB 1   Approved by Governor                                   
-    ## 2  1999 1999    HB 1   Chapter No. 99-377                                     
-    ## 3  1999 1999    HB 1   See also CS/HB 1927 (Ch. 99-393), HB 2125 (Ch. 99-397) 
-    ## 4  1999 1999    SB 2   H Died in Messages                                     
-    ## 5  1999 1999    HB 3   S Died in Committee on Health, Aging and Long-Term Care
-    ## 6  1999 1999    SB 4   Approved by Governor
+    ##    Year Session Number Action                                 
+    ##   <dbl> <chr>   <chr>  <chr>                                  
+    ## 1  1998 1998    HB 1   H Withdrawn                            
+    ## 2  1998 1998    SB 2   Became Law without Governor's Signature
+    ## 3  1998 1998    SB 2   Chapter No. 98-425 -SJ 00458           
+    ## 4  1998 1998    HB 3   Approved by Governor                   
+    ## 5  1998 1998    HB 3   Chapter No. 97-29 -HJ 01218            
+    ## 6  1998 1998    SB 4   S House Bill substituted -SJ 00170
 
 ### Votes
 
@@ -128,14 +136,14 @@ head(committee_votes)
 ```
 
     ## # A tibble: 6 × 9
-    ##   Session Number Version Date          Committee  Yeas  Nays VoteResultUrl  Year
-    ##   <chr>   <chr>  <chr>   <chr>         <chr>     <dbl> <dbl> <chr>         <dbl>
-    ## 1 1999    HB 1   H 1 e3  4/29/1999 10… Senate       39     0 https://www.…  1999
-    ## 2 1999    HB 1   H 1 e3  4/30/1999 4:… House       116     0 https://www.…  1999
-    ## 3 1999    HB 1   H 1 e3  4/30/1999 4:… House       118     0 https://www.…  1999
-    ## 4 1999    SB 2   S 2 e1  3/23/1999 10… Senate       35     4 https://www.…  1999
-    ## 5 1999    SB 2   S 2 e1  3/23/1999 10… Senate       20    18 https://www.…  1999
-    ## 6 1999    SB 2   S 2 e1  3/23/1999 10… Senate       25    11 https://www.…  1999
+    ##   Session Number Version   Date        Committee  Yeas  Nays VoteResultUrl  Year
+    ##   <chr>   <chr>  <chr>     <chr>       <chr>     <dbl> <dbl> <chr>         <dbl>
+    ## 1 1998    HB 1   H 1 Filed 9/18/1997 … House         0   120 https://www.…  1998
+    ## 2 1998    HB 1   H 1 Filed 2/24/1998 … House         0   119 https://www.…  1998
+    ## 3 1998    HB 1   H 1 Filed 3/5/1998 3… House        15     0 https://www.…  1998
+    ## 4 1998    HB 1   H 1 Filed 3/11/1998 … House        17     0 https://www.…  1998
+    ## 5 1998    HB 1   H 1 Filed 3/17/1998 … House        16     0 https://www.…  1998
+    ## 6 1998    HB 1   H 1 Filed 5/1/1998 1… Senate       40     0 https://www.…  1998
 
 ``` r
 # Floor Votes
@@ -144,14 +152,14 @@ head(committee_votes)
 ```
 
     ## # A tibble: 6 × 9
-    ##   Session Number Version Date          Committee  Yeas  Nays VoteResultUrl  Year
-    ##   <chr>   <chr>  <chr>   <chr>         <chr>     <dbl> <dbl> <chr>         <dbl>
-    ## 1 1999    HB 1   H 1 e3  4/29/1999 10… Senate       39     0 https://www.…  1999
-    ## 2 1999    HB 1   H 1 e3  4/30/1999 4:… House       116     0 https://www.…  1999
-    ## 3 1999    HB 1   H 1 e3  4/30/1999 4:… House       118     0 https://www.…  1999
-    ## 4 1999    SB 2   S 2 e1  3/23/1999 10… Senate       35     4 https://www.…  1999
-    ## 5 1999    SB 2   S 2 e1  3/23/1999 10… Senate       20    18 https://www.…  1999
-    ## 6 1999    SB 2   S 2 e1  3/23/1999 10… Senate       25    11 https://www.…  1999
+    ##   Session Number Version   Date        Committee  Yeas  Nays VoteResultUrl  Year
+    ##   <chr>   <chr>  <chr>     <chr>       <chr>     <dbl> <dbl> <chr>         <dbl>
+    ## 1 1998    HB 1   H 1 Filed 9/18/1997 … House         0   120 https://www.…  1998
+    ## 2 1998    HB 1   H 1 Filed 2/24/1998 … House         0   119 https://www.…  1998
+    ## 3 1998    HB 1   H 1 Filed 3/5/1998 3… House        15     0 https://www.…  1998
+    ## 4 1998    HB 1   H 1 Filed 3/11/1998 … House        17     0 https://www.…  1998
+    ## 5 1998    HB 1   H 1 Filed 3/17/1998 … House        16     0 https://www.…  1998
+    ## 6 1998    HB 1   H 1 Filed 5/1/1998 1… Senate       40     0 https://www.…  1998
 
 ## Exploring Further
 
