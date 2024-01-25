@@ -5,7 +5,7 @@
 \alias{bills}
 \title{Florida Legislative Bills (1998-2023)}
 \format{
-A data frame with 69405 rows and 12 variables:
+A data frame with 68487 rows and 13 variables:
 \describe{
 \item{Year}{Year of the session in which the bill was filed}
 \item{Chamber}{Chamber in which the bill was filed}
@@ -41,7 +41,10 @@ please consider opening an Issue on the GitHub project. We welcome and
 appreciate user contributions.
 }
 \examples{
-data(bills)
-summary(bills)  # To view a basic summary of the dataset
+library(dplyr)
+bills
+bills \%>\%
+  filter( Year == 2015 )
+
 }
 \keyword{datasets}

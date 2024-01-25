@@ -65,11 +65,18 @@ This dataset is broken into the following dataframes:
   version
 - floor_votes - All recorded floor votes that occurred
 - actions - Actions that were taken on a bill
+- preemptions - Bills between 2010 and 2022 that preempted local
+  government authority
 
 ``` r
 # Load the floridagov library
 library(floridagov)
 library(dplyr) # dplyr used for the following examples
+
+# Load one or more of the datasets
+data(bills)
+data(floor_votes)
+data(preemptions)
 ```
 
 ### Filed Bills
@@ -110,6 +117,42 @@ head(actions)
     ## 5  1999 1999    HB 3   S Died in Committee on Health, Aging and Long-Term Care
     ## 6  1999 1999    SB 4   Approved by Governor
 
+### Votes
+
+Legislative votes are included, both committee votes and floor votes.
+
+``` r
+# Committee Votes
+data(committee_votes)
+head(committee_votes)
+```
+
+    ## # A tibble: 6 × 9
+    ##   Session Number Version Date          Committee  Yeas  Nays VoteResultUrl  Year
+    ##   <chr>   <chr>  <chr>   <chr>         <chr>     <dbl> <dbl> <chr>         <dbl>
+    ## 1 1999    HB 1   H 1 e3  4/29/1999 10… Senate       39     0 https://www.…  1999
+    ## 2 1999    HB 1   H 1 e3  4/30/1999 4:… House       116     0 https://www.…  1999
+    ## 3 1999    HB 1   H 1 e3  4/30/1999 4:… House       118     0 https://www.…  1999
+    ## 4 1999    SB 2   S 2 e1  3/23/1999 10… Senate       35     4 https://www.…  1999
+    ## 5 1999    SB 2   S 2 e1  3/23/1999 10… Senate       20    18 https://www.…  1999
+    ## 6 1999    SB 2   S 2 e1  3/23/1999 10… Senate       25    11 https://www.…  1999
+
+``` r
+# Floor Votes
+data(committee_votes)
+head(committee_votes)
+```
+
+    ## # A tibble: 6 × 9
+    ##   Session Number Version Date          Committee  Yeas  Nays VoteResultUrl  Year
+    ##   <chr>   <chr>  <chr>   <chr>         <chr>     <dbl> <dbl> <chr>         <dbl>
+    ## 1 1999    HB 1   H 1 e3  4/29/1999 10… Senate       39     0 https://www.…  1999
+    ## 2 1999    HB 1   H 1 e3  4/30/1999 4:… House       116     0 https://www.…  1999
+    ## 3 1999    HB 1   H 1 e3  4/30/1999 4:… House       118     0 https://www.…  1999
+    ## 4 1999    SB 2   S 2 e1  3/23/1999 10… Senate       35     4 https://www.…  1999
+    ## 5 1999    SB 2   S 2 e1  3/23/1999 10… Senate       20    18 https://www.…  1999
+    ## 6 1999    SB 2   S 2 e1  3/23/1999 10… Senate       25    11 https://www.…  1999
+
 ## Exploring Further
 
 You can explore the data further and create plots. Let’s take a look a
@@ -118,7 +161,8 @@ few examples.
 ### Bills Filed Per Year
 
 A straightforward plot to begin with is a the number of bills filed in
-the 15-year period from 2005 and 2020.
+the 15-year period from 2005 and 2020. (Note: The minimum point on the
+graph is around 1800 bills filed in the years 2015 and 2016.)
 
 ``` r
 library(ggplot2)
@@ -131,14 +175,48 @@ bills_summary <- bills %>%
   summarize(Total = n())
 
 ggplot(bills_summary, aes(x = Year)) +
-  geom_smooth(aes(y = Total, colour = "Total"), span=0.3,, se=FALSE) +
+  geom_line(aes(y = Total, colour = "Total"), size=1.25) +
   theme_minimal() +
   xlab("Year") +
   ylab("Number of Bills") +
   ggtitle("Number of Bills per Year")
 ```
 
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
 ![](images/billsByYear-1.png)<!-- -->
+
+### Veto Actions Per Year
+
+Let’s take a look at the number of veto actions across all years in the
+dataset, and adding some smoothing to the graph.
+
+``` r
+library(ggplot2)
+library(stringr)
+
+data(actions)
+
+bills_veto_summary <- actions %>%
+  filter( str_detect(Action, 'Veto')) %>%
+  group_by(Year) %>%
+  summarize(Total = n())
+
+ggplot(bills_veto_summary, aes(x = Year)) +
+  geom_smooth(aes(y = Total, colour = "Total"), span=0.2,, se=FALSE) +
+  theme_minimal() +
+  xlab("Year") +
+  ylab("Number of Bills") +
+  ggtitle("Number of Veto Actions")
+```
+
+    ## Warning in sqrt(sum.squares/one.delta): NaNs produced
+
+![](images/vetoActionsByYear-1.png)<!-- -->
 
 ### Top Bill Authors From 2010 to 2015
 
@@ -167,7 +245,7 @@ top_authors_data <- filtered_authors %>%
 
 # Plotting the data
 ggplot(top_authors_data, aes(x = Year, y = TotalBills, group = Author, color = Author)) +
-  geom_smooth(method = "loess", span=0.6, se = FALSE) +
+  geom_smooth(method = "loess", span=0.4, se = FALSE) +
   labs(title = "Top 5 Bill Authors (2010-2015)",
        x = "Year", y = "Total Bills Authored") +
   theme_minimal()
@@ -181,43 +259,41 @@ Perhaps your research is concerned with drugs (legal or otherwise) and
 law enforcement. A simple full-text search of the bill summaries for
 keywords of interest could be a good starting point.
 
-``` r
-library(ggplot2)
-library(stringr)
+    library(ggplot2)
+    library(stringr)
 
-data(bills)
+    data(bills)
 
-topics <- c("law enforcement", "marijuana", "drugs")
+    topics <- c("law enforcement", "marijuana", "drugs")
 
-# Create a function to determine the topic based on summary
-find_topic <- function(summary) {
-  for (topic in topics) {
-    if (str_detect(summary, regex(topic, ignore_case = TRUE))) {
-      return(topic)
+    # Create a function to determine the topic based on summary
+    find_topic <- function(summary) {
+      for (topic in topics) {
+        if (str_detect(summary, regex(topic, ignore_case = TRUE))) {
+          return(topic)
+        }
+      }
+      return(NA)
     }
-  }
-  return(NA)
-}
 
-# Create the new dataframe with the additional Topic column
-bill_topics <- bills %>%
-  mutate(Topic = sapply(Summary, find_topic)) %>%
-  na.omit()
+    # Create the new dataframe with the additional Topic column
+    bill_topics <- bills %>%
+      mutate(Topic = sapply(Summary, find_topic)) %>%
+      na.omit()
 
-# Group by Year and Topic, then count
-year_topic_count <- bill_topics %>%
-  group_by(Year, Topic) %>%
-  summarise(Count = n(), .groups = 'drop')
+    # Group by Year and Topic, then count
+    year_topic_count <- bill_topics %>%
+      group_by(Year, Topic) %>%
+      summarise(Count = n(), .groups = 'drop')
 
-# Plotting the data
-ggplot(year_topic_count, aes(x = Year, y = Count, group = Topic, color = Topic)) +
-  geom_smooth(method = "loess", span=0.4, se = FALSE) +
-  labs(title = "Count by Year for Each Topic",
-       x = "Year", y = "Count") +
-  theme_minimal()
-```
+    # Plotting the data
+    ggplot(year_topic_count, aes(x = Year, y = Count, group = Topic, color = Topic)) +
+      geom_smooth(method = "loess", span=0.4, se = FALSE) +
+      labs(title = "Count by Year for Each Topic",
+           x = "Year", y = "Count") +
+      theme_minimal()
 
-![](images/billsByYearForTopics-1.png)<!-- -->
+![](images/billsByYearForTopics-1.png)
 
 ### Wordcloud Visualiztions
 
@@ -243,9 +319,78 @@ into a wordcloud.
     # Using wordcloud2 to create the word cloud
     wordcloud2(filer_freq)
 
-<figure>
-<img src="images/wordcloud-filedby-2022.png"
-alt="Wordcloud of 2022 Florida Legislative Bill Filers" />
-<figcaption aria-hidden="true">Wordcloud of 2022 Florida Legislative
-Bill Filers</figcaption>
-</figure>
+![](images/wordcloud-filedby-2022.png)
+
+The possibilities are endless. The following wordcloud is a
+representation of the frequency of bill filers (filed_by) who filed
+local government preemptions between 2010 and 2022, as identified by the
+Florida League of Cities researchers (preemptions), along with topic
+frequencies pulled from bill titles (bills) (using tidytext to filter
+out stop words). The frequency of filers was scaled compared to topics
+to aid in visualization.
+
+![](images/wordcloud-preemptions-by-filer-and-topic.png)
+
+## Next Steps
+
+By examining the comprehensive details of legislative bills from 1998 to
+2023, including authors, filers, co-introducers, legislative actions,
+and voting results, scholars can gain deep insights into the workings of
+the Florida legislature. Additionally, the data from the Florida League
+of Cities adds a unique dimension by highlighting instances where state
+legislation has overridden local government autonomy.
+
+This dataset is not just a historical record; it’s a laboratory for
+testing theories and models in political science. For example,
+researchers can explore the impact of political affiliation on
+legislative success. By comparing the success rate of bills authored by
+different parties, insights can be gained into partisan dynamics within
+the legislature. Additionally, by analyzing the full bill summaries and
+vote results, one could investigate the role of legislative framing and
+rhetoric in securing votes. This could involve using natural language
+processing techniques to identify which phrases or styles correlate with
+successful legislation.
+
+Moreover, the dataset provides opportunities to delve into the nuances
+of policy areas. Researchers might examine trends in environmental,
+educational, or health-related bills, providing a window into how
+priorities have shifted over time. They can also explore the
+relationship between lobbyists and legislation, by linking bill subjects
+with lobbying activities. Furthermore, advanced statistical analysis
+could reveal hidden patterns in legislative activity, such as
+identifying periods of high legislative productivity or stagnation.
+
+Additional research ideas could include:
+
+- Analyzing the effect of external events (like natural disasters or
+  economic recessions) on the types of bills introduced and passed.
+- Investigating the role of demographics in legislative success: Are
+  bills introduced by women or minority legislators more or less likely
+  to pass? How about bills from rural vs urban/suburban districts?
+  Freshman vs senior legislators?
+- Studying amendments to bills: What types of amendments are most
+  common, and how do they affect a bill’s likelihood of passage?
+- Correlating electoral cycles with legislative activity: Is there a
+  noticeable change in the types of bills filed or passed in election
+  years?
+- Using sentiment analysis to gauge public opinion on certain bills,
+  possibly linking it with social media data.
+
+Most importantly, the results of this research, and this and other
+datasets, can be used to produce effective visualizations to better
+communicate the traditionally complex world of politics simply and
+effectively to voters.
+
+By engaging with this dataset, political science students and
+researchers can not only contribute to the academic understanding of
+legislative processes but also potentially influence future policymaking
+through their findings. The possibilities for discovery and impact are
+vast, making this dataset an invaluable resource for those seeking to
+delve deeper into the world of political science and data analytics.
+
+## Credits
+
+Data was sourced from the legislative website(s) of the State of Florida
+(<https://flsenate.gov/>) and the Florida League of Cities
+(<https://flcities.com/>). It was compiled and published by Steven
+Brendtro of Opal Research.

@@ -9,7 +9,7 @@
 #' community, please consider opening an Issue on the GitHub project. We are
 #' always open to including user contributions.
 #'
-#' @format A data frame with XXXXX rows and 4 variables:
+#' @format A data frame with 96492 rows and 4 variables:
 #' \describe{
 #'   \item{Year}{Year of the session in which the bill was filed}
 #'   \item{Session}{Session in which the bill was filed}
@@ -22,6 +22,9 @@
 #' }
 #'
 #' @examples
-#' data(authors)
-#' summary(authors)  # To view a basic summary of the dataset
+#' library(dplyr)
+#' authors
+#' authors %>%
+#'   filter( Year == 2015 )
+#'
 "authors"

@@ -9,7 +9,7 @@
 #' the data and believe it could be beneficial, please open an Issue on the
 #' GitHub project. User contributions are highly valued.
 #'
-#' @format A data frame with XXXXX rows and 4 variables:
+#' @format A data frame with 116988 rows and 4 variables:
 #' \describe{
 #'   \item{Year}{Year of the session in which the bill was filed}
 #'   \item{Session}{Session in which the bill was filed}
@@ -22,6 +22,9 @@
 #' }
 #'
 #' @examples
-#' data(cointroducers)
-#' summary(cointroducers)  # To view a basic summary of the dataset
+#' library(dplyr)
+#' cointroducers
+#' cointroducers %>%
+#'   filter( Year == 2015 )
+#'
 "cointroducers"

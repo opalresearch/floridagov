@@ -5,7 +5,7 @@
 \alias{floor_votes}
 \title{Floor Votes on Florida Legislative Bills (1998-2023)}
 \format{
-A data frame with XXXXX rows and 8 variables:
+A data frame with 25408 rows and 9 variables:
 \describe{
 \item{Year}{Year of the session in which the bill was filed}
 \item{Session}{Session in which the bill was filed}
@@ -38,7 +38,10 @@ additional data or improvements that could benefit the community, please
 open an Issue on the GitHub project. User contributions are highly valued.
 }
 \examples{
-data(floor_votes)
-summary(floor_votes)  # To view a basic summary of the dataset
+library(dplyr)
+floor_votes
+floor_votes \%>\%
+  filter( Year == 2015 )
+
 }
 \keyword{datasets}

@@ -5,7 +5,7 @@
 \alias{committee_votes}
 \title{Committee Votes on Florida Legislative Bills (1998-2023)}
 \format{
-A data frame with XXXXX rows and 8 variables:
+A data frame with 41793 rows and 9 variables:
 \describe{
 \item{Year}{Year of the session in which the bill was filed}
 \item{Session}{Session in which the bill was filed}
@@ -39,7 +39,10 @@ the data and believe it could benefit the wider community, please open an
 Issue on the GitHub project. User contributions are greatly appreciated.
 }
 \examples{
-data(committee_votes)
-summary(committee_votes)  # To view a basic summary of the dataset
+library(dplyr)
+committee_votes
+committee_votes \%>\%
+  filter( Year == 2015 )
+
 }
 \keyword{datasets}
