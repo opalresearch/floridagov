@@ -59,6 +59,7 @@ This dataset is broken into the following dataframes:
   version
 - floor_votes - All recorded floor votes that occurred
 - actions - Actions that were taken on a bill
+- appropriations - Bills with appropriations
 - preemptions - Bills between 2010 and 2022 that preempted local
   government authority
 
@@ -80,30 +81,30 @@ selected columns.)
 
 ``` r
 data(bills)
-head(bills %>% select(Session,Number,Title,Category))
+head(bills %>% filter( Year == 2015) %>% select(Session,Number,Title,Category))
 ```
 
     ##   Session Number
-    ## 1    1998   HB 1
-    ## 2    1998   SB 2
-    ## 3    1998   HB 3
-    ## 4    1998   SB 4
-    ## 5    1998   HB 5
-    ## 6    1998   SB 6
-    ##                                                                                                                                                                                                                                                              Title
-    ## 1                                                                                                                                                                                                                                                Tobacco Education
-    ## 2                                                                    Relief/David Kelley & Kelley Estate;  compensates David Kelley & Estate of Alto Kelley for injuries & damages sustained as result of negligence of DOT. CLAIM WITH APPROPRIATION: $1,400,000.
-    ## 3                                                                                                                                                                                                                                        Unemployment Compensation
-    ## 4 Relief/Garcia/Miami Beach;  provides for relief of Juan A. Garcia, Jr., & Juan & Barbara Garcia, as natural parents of Juan A. Garcia, Jr.; compensates them for injuries & damages sustained as result of negligence of City of Miami Beach. CLAIM: $1,050,000.
-    ## 5                                                                                                                                                                                                                                                         Veterans
-    ## 6                                                                                     Relief/Michelle Ponce/Dade Co.;  compensates Michelle Ponce, a minor, for injuries & damages sustained as result of negligence of Metropolitan Dade County. CLAIM: $410,000.
-    ##       Category
-    ## 1 GENERAL BILL
-    ## 2 GENERAL BILL
-    ## 3 GENERAL BILL
-    ## 4   LOCAL BILL
-    ## 5 GENERAL BILL
-    ## 6   LOCAL BILL
+    ## 1    2015   HB 1
+    ## 2    2015   SB 2
+    ## 3    2015   HB 3
+    ## 4    2015   HB 5
+    ## 5    2015   HB 7
+    ## 6    2015   HB 9
+    ##                                                                   Title
+    ## 1                                                 Texting While Driving
+    ## 2                                             Greyhound Racing Injuries
+    ## 3                                         Closing the Gap Grant Program
+    ## 4                                              Guardianship Proceedings
+    ## 5                 Pub. Rec./Claim Settlement on Behalf of Minor or Ward
+    ## 6 Use Of Wireless Communications Device While Operating a Motor Vehicle
+    ##                      Category
+    ## 1                GENERAL BILL
+    ## 2                GENERAL BILL
+    ## 3                GENERAL BILL
+    ## 4                GENERAL BILL
+    ## 5 PUBLIC RECORDS/GENERAL BILL
+    ## 6                GENERAL BILL
 
 ### Legislative Actions
 
@@ -124,6 +125,23 @@ head(actions)
     ## 4  1998 1998    HB 3   Approved by Governor                   
     ## 5  1998 1998    HB 3   Chapter No. 97-29 -HJ 01218            
     ## 6  1998 1998    SB 4   S House Bill substituted -SJ 00170
+
+### Appropriations
+
+Proposed appropriation bills and their amounts
+
+``` r
+data(appropriations)
+head(appropriations)
+```
+
+    ##   Year Chamber Session Number Claim  Amount
+    ## 1 1998  Senate    1998   SB 2  TRUE 1400000
+    ## 2 1998  Senate    1998  SB 10  TRUE  250000
+    ## 3 1998  Senate    1998  SB 12  TRUE  450000
+    ## 4 1998  Senate    1998  SB 18  TRUE   18230
+    ## 5 1998  Senate    1998  SB 20  TRUE   15402
+    ## 6 1998  Senate    1998  SB 28  TRUE 4600000
 
 ### Votes
 
@@ -190,12 +208,6 @@ ggplot(bills_summary, aes(x = Year)) +
   ggtitle("Number of Bills per Year")
 ```
 
-    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-    ## ℹ Please use `linewidth` instead.
-    ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
-
 ![](images/billsByYear-1.png)<!-- -->
 
 ### Veto Actions Per Year
@@ -222,9 +234,39 @@ ggplot(bills_veto_summary, aes(x = Year)) +
   ggtitle("Number of Veto Actions")
 ```
 
-    ## Warning in sqrt(sum.squares/one.delta): NaNs produced
-
 ![](images/vetoActionsByYear-1.png)<!-- -->
+
+### Proposed Appropriations by Year
+
+Appropriation bills (excluding claims) for the entire period, total
+amount per year”
+
+``` r
+library(dplyr)
+library(ggplot2)
+library(scales)  # For label_number()
+
+# Summarize the data
+yearly_totals <- appropriations %>%
+  filter(Claim == FALSE) %>%
+  group_by(Year) %>%
+  summarize(TotalAmount = sum(Amount, na.rm = TRUE))
+
+# Plot the data
+
+# Proposed Appropriations by Year
+ggplot(yearly_totals, aes(x = Year, y = TotalAmount)) +
+  #  geom_line() +  # Creates the line plot
+  geom_point(shape = 1, color = "green", size = 3, fill = NA) +  # Small, blue, unfilled circles
+  geom_smooth(method = "loess", span = 0.2, se = FALSE, color = "green") +  # Adds a smoothed line
+  scale_y_continuous(labels = label_number(suffix = " B", prefix = "$", scale = 1e-9)) + # millions
+  labs(title = "Proposed Appropriations by Year", 
+       x = "Year", 
+       y = "Appropriations") +
+  theme_minimal()
+```
+
+![](images/appropriationsByYear-1.png)<!-- -->
 
 ### Top Bill Authors From 2010 to 2015
 

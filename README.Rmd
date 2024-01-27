@@ -53,6 +53,7 @@ This dataset is broken into the following dataframes:
  * committee_votes - All recorded votes from each committtee and bill version
  * floor_votes - All recorded floor votes that occurred
  * actions - Actions that were taken on a bill
+ * appropriations - Bills with appropriations
  * preemptions - Bills between 2010 and 2022 that preempted local government authority
 
 ```{r library, message = FALSE}
@@ -70,7 +71,7 @@ data(preemptions)
 (There are more columns than this. The following just shows these four selected columns.)
 ```{r bills}
 data(bills)
-head(bills %>% select(Session,Number,Title,Category))
+head(bills %>% filter( Year == 2015) %>% select(Session,Number,Title,Category))
 ```
 
 ### Legislative Actions
@@ -78,6 +79,13 @@ Legislative actions are listed for each bill as it proceeds through legislature.
 ```{r actions}
 data(actions)
 head(actions)
+```
+
+### Appropriations
+Proposed appropriation bills and their amounts
+```{r appropriations}
+data(appropriations)
+head(appropriations)
 ```
 
 ### Votes
@@ -104,7 +112,7 @@ A straightforward plot to begin with is a the number of bills filed in the 15-ye
 period from 2005 and 2020. (Note: The minimum point on the graph is around 1800 
 bills filed in the years 2015 and 2016.)
 
-```{r billsByYear, message = FALSE}
+```{r billsByYear, message=FALSE, warning=FALSE}
 library(ggplot2)
 
 data(bills)
@@ -125,7 +133,7 @@ ggplot(bills_summary, aes(x = Year)) +
 ### Veto Actions Per Year
 Let's take a look at the number of veto actions across all years in the dataset, and adding some smoothing to the graph.
 
-```{r vetoActionsByYear, message = FALSE}
+```{r vetoActionsByYear, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(stringr)
 
@@ -142,6 +150,33 @@ ggplot(bills_veto_summary, aes(x = Year)) +
   xlab("Year") +
   ylab("Number of Bills") +
   ggtitle("Number of Veto Actions")
+```
+
+### Proposed Appropriations by Year
+Appropriation bills (excluding claims) for the entire period, total amount per year"
+```{r appropriationsByYear, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(scales)  # For label_number()
+
+# Summarize the data
+yearly_totals <- appropriations %>%
+  filter(Claim == FALSE) %>%
+  group_by(Year) %>%
+  summarize(TotalAmount = sum(Amount, na.rm = TRUE))
+
+# Plot the data
+
+# Proposed Appropriations by Year
+ggplot(yearly_totals, aes(x = Year, y = TotalAmount)) +
+  #  geom_line() +  # Creates the line plot
+  geom_point(shape = 1, color = "green", size = 3, fill = NA) +  # Small, blue, unfilled circles
+  geom_smooth(method = "loess", span = 0.2, se = FALSE, color = "green") +  # Adds a smoothed line
+  scale_y_continuous(labels = label_number(suffix = " B", prefix = "$", scale = 1e-9)) + # millions
+  labs(title = "Proposed Appropriations by Year", 
+       x = "Year", 
+       y = "Appropriations") +
+  theme_minimal()
 ```
 
 ### Top Bill Authors From 2010 to 2015
